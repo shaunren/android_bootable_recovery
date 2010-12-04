@@ -917,9 +917,9 @@ void show_voodoo_menu() {
 	__system("/voodoo/bin/is_lagfix_system_conversion_enabled");
         f = fopen("/voodoo/run/lagfix_system_conversion_enabled","r");
         if (f==NULL) {
-          ui_print("\n    /system always as RFS: no\n");
+          ui_print("\n/system lagfix conversion: no\n");
         } else {
-          ui_print("\n    /system always as RFS: yes\n");
+          ui_print("\n/system lagfix conversion: yes\n");
           fclose(f);
         }
 
