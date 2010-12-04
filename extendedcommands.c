@@ -884,10 +884,10 @@ void show_voodoo_menu() {
 
   static char* list[] = { "disable Voodoo lagfix",
                           "enable  Voodoo lagfix",
-                          "allow /system conversion: will allow lagfix",
-                          "disallow: will keep the same filesystem",
-                          "enable debug mode: adb on & root",
-                          "disable debug mode",
+                          "/system lagfix",
+                          "/system RFS",
+                          "debug off (default)",
+                          "debug on",
                           "Reboot to Download mode",
                           NULL
     };
@@ -916,9 +916,9 @@ void show_voodoo_menu() {
 	__system("/voodoo/bin/is_lagfix_system_conversion_enabled");
         f = fopen("/voodoo/run/lagfix_system_conversion_enabled","r");
         if (f==NULL) {
-          ui_print("\n allow /system conversion: no\n");
+          ui_print("\n    /system always as RFS: no\n");
         } else {
-          ui_print("\n allow /system conversion: yes\n");
+          ui_print("\n    /system always as RFS: yes\n");
           fclose(f);
         }
 
@@ -930,7 +930,7 @@ void show_voodoo_menu() {
           fclose(f);
           ui_print("               debug mode: yes\n");
         }
-          ui_print("\n\n\n\n\n\n\n\n\n\n\n");
+          ui_print("\n\n\n\n\n\n\n\n");
 
        int chosen_item = get_menu_selection(headers, list, 0);
         if (chosen_item == GO_BACK)
