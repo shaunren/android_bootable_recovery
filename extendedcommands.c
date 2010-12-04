@@ -762,6 +762,7 @@ void show_advanced_menu()
                             "Fix Permissions",
 #endif
                             "Restart adbd",
+                            "Reboot to Download mode",
                             NULL
     };
 
@@ -871,6 +872,7 @@ void show_advanced_menu()
                 __system("killall adbd");
                 break;
             }
+            case 8: __reboot(LINUX_REBOOT_MAGIC1, LINUX_REBOOT_MAGIC2, LINUX_REBOOT_CMD_RESTART2, "download");break;
         }
     }
 }
@@ -888,7 +890,6 @@ void show_voodoo_menu() {
                           "/system RFS",
                           "debug off (default)",
                           "debug on",
-                          "Reboot to Download mode",
                           NULL
     };
 
@@ -943,7 +944,6 @@ void show_voodoo_menu() {
           case 3: __system("/voodoo/bin/set_system_as_rfs");break;
           case 4: __system("/voodoo/bin/disable_debug_mode");break;
           case 5: __system("/voodoo/bin/enable_debug_mode");break;
-          case 6: __reboot(LINUX_REBOOT_MAGIC1, LINUX_REBOOT_MAGIC2, LINUX_REBOOT_CMD_RESTART2, "download");break;
         }
     }
 }
