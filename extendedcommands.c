@@ -884,11 +884,11 @@ void show_voodoo_menu() {
                               NULL
   };
 
-  static char* list[] = { "disable Voodoo lagfix",
-                          "enable  Voodoo lagfix",
-                          "/system lagfix",
-                          "/system RFS",
-                          "debug off (default)",
+  static char* list[] = { "disable lagfix",
+                          "enable  lagfix                   (default)",
+                          "/system lagfix on                (default)",
+                          "/system lagfix off",
+                          "debug off                        (default)",
                           "debug on",
                           NULL
     };
