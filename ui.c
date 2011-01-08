@@ -35,8 +35,8 @@ static int gShowBackButton = 1;
 static int gShowBackButton = 0;
 #endif
 
-#define MAX_COLS 64
-#define MAX_ROWS 32 
+#define MAX_COLS 96
+#define MAX_ROWS 32
 
 #define MENU_MAX_COLS 64
 #define MENU_MAX_ROWS 250
@@ -62,6 +62,7 @@ static int ui_has_initialized = 0;
 static const struct { gr_surface* surface; const char *name; } BITMAPS[] = {
     { &gBackgroundIcon[BACKGROUND_ICON_INSTALLING], "icon_installing" },
     { &gBackgroundIcon[BACKGROUND_ICON_ERROR],      "icon_error" },
+    { &gBackgroundIcon[BACKGROUND_ICON_CLOCKWORK],  "icon_clockwork" },
     { &gProgressBarIndeterminate[0],    "indeterminate1" },
     { &gProgressBarIndeterminate[1],    "indeterminate2" },
     { &gProgressBarIndeterminate[2],    "indeterminate3" },
@@ -164,9 +165,9 @@ static void draw_text_line(int row, const char* t) {
   }
 }
 
-#define MENU_TEXT_COLOR 215, 0, 0, 112
-#define NORMAL_TEXT_COLOR 186, 186, 186, 255
-#define HEADER_TEXT_COLOR 160, 0, 0, 255
+#define MENU_TEXT_COLOR 255, 160, 49, 255
+#define NORMAL_TEXT_COLOR 200, 200, 200, 255
+#define HEADER_TEXT_COLOR NORMAL_TEXT_COLOR
 
 // Redraw everything on the screen.  Does not flip pages.
 // Should only be called with gUpdateMutex locked.
@@ -459,7 +460,7 @@ void ui_print(const char *fmt, ...)
     vsnprintf(buf, 256, fmt, ap);
     va_end(ap);
 
-    fputs(buf, stderr);
+    fputs(buf, stdout);
 
     // This can get called before ui_init(), so be careful.
     pthread_mutex_lock(&gUpdateMutex);
@@ -490,7 +491,7 @@ void ui_reset_text_col()
 #define MENU_ITEM_HEADER " - "
 #define MENU_ITEM_HEADER_LENGTH strlen(MENU_ITEM_HEADER)
 
-int ui_start_menu(char** headers, char** items) {
+int ui_start_menu(char** headers, char** items, int initial_selection) {
     int i;
     pthread_mutex_lock(&gUpdateMutex);
     if (text_rows > 0 && text_cols > 0) {
@@ -514,7 +515,7 @@ int ui_start_menu(char** headers, char** items) {
 
         menu_items = i - menu_top;
         show_menu = 1;
-        menu_sel = menu_show_start = 0;
+        menu_sel = menu_show_start = initial_selection;
         update_screen_locked();
     }
     pthread_mutex_unlock(&gUpdateMutex);
@@ -567,6 +568,14 @@ int ui_text_visible()
     int visible = show_text;
     pthread_mutex_unlock(&gUpdateMutex);
     return visible;
+}
+
+void ui_show_text(int visible)
+{
+    pthread_mutex_lock(&gUpdateMutex);
+    show_text = visible;
+    update_screen_locked();
+    pthread_mutex_unlock(&gUpdateMutex);
 }
 
 int ui_wait_key()

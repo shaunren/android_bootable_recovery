@@ -34,6 +34,11 @@
 
 #define PRESS_THRESHHOLD    10
 
+#define ABS_MT_POSITION_X 0x35
+#define ABS_MT_POSITION_Y 0x36
+#define ABS_MT_TOUCH_MAJOR 0x30
+#define SYN_MT_REPORT 2
+
 struct virtualkey {
     int scancode;
     int centerx, centery;
