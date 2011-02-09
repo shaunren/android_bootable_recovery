@@ -907,12 +907,15 @@ void show_tweaks_menu() {
     bool tweaks_enabled[TWEAK_COUNT];
 
     char tmp[PATH_MAX];
+    int i;
+
     while (1) {
         FILE* f = NULL;
 
         ui_print("\nTweaks enabled:\n");
         
-        for (int i=0; i<TWEAK_COUNT; i++) {
+        for (i=0; i<TWEAK_COUNT; i++) {
+
             sprintf(tmp, "/sdcard/Voodoo/disable-%s-tweak", tweaks[i]);
             f = fopen(tmp, "r");
             if (f == NULL) {
@@ -936,21 +939,27 @@ void show_tweaks_menu() {
             break;
 
         if (chosen_item < TWEAK_COUNT) {
+
             sprintf(tmp, "/voodoo/bin/%s_%s_tweak", 
                     (tweaks_enabled[chosen_item] ? "disable" : "enable"), 
                     tweaks[chosen_item]);
 
             __system(tmp);
+
         } else if (chosen_item == TWEAK_COUNT + 1) { // disable all
-            for (int i=0; i<TWEAK_COUNT; i++) {
+
+            for (i=0; i<TWEAK_COUNT; i++) {
                 sprintf(tmp, "/voodoo/bin/disable_%s_tweak", tweaks[i]);
                 __system(tmp);
             }
+
         } else if (chosen_item == TWEAK_COUNT + 2) { // enable all
-            for (int i=0; i<TWEAK_COUNT; i++) {
+
+            for (i=0; i<TWEAK_COUNT; i++) {
                 sprintf(tmp, "/voodoo/bin/enable_%s_tweak", tweaks[i]);
                 __system(tmp);
             }
+
         }
      
     }
