@@ -38,6 +38,9 @@ void
 show_advanced_menu();
 
 void
+show_tweaks_menu();
+
+void
 show_voodoo_menu();
 
 int

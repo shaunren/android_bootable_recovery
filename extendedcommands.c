@@ -757,12 +757,14 @@ void show_advanced_menu()
                             "Wipe Battery Stats",
                             "Report Error",
                             "Key Test",
+                            "Voodoo++ Tweaks", // voodoo++ tweaks
 #ifndef BOARD_HAS_SMALL_RECOVERY
                             "Partition SD Card",
                             "Fix Permissions",
 #endif
                             "Restart adbd",
                             "Reboot to Download mode",
+
                             NULL
     };
 
@@ -815,7 +817,10 @@ void show_advanced_menu()
                 while (action != GO_BACK);
                 break;
             }
-            case 5:
+            case 5: // voodoo++ tweaks
+                show_tweaks_menu();
+                break;
+            case 6:
             {
                 static char* ext_sizes[] = { "128M",
                                              "256M",
@@ -858,7 +863,7 @@ void show_advanced_menu()
                     ui_print("An error occured while partitioning your SD Card. Please see /tmp/recovery.log for more details.\n");
                 break;
             }
-            case 6:
+            case 7:
             {
                 ensure_root_path_mounted("SYSTEM:");
                 ensure_root_path_mounted("DATA:");
@@ -867,13 +872,87 @@ void show_advanced_menu()
                 ui_print("Done!\n");
                 break;
             }
-            case 7:
+            case 8:
             {
                 __system("killall adbd");
                 break;
             }
-            case 8: __reboot(LINUX_REBOOT_MAGIC1, LINUX_REBOOT_MAGIC2, LINUX_REBOOT_CMD_RESTART2, "download");break;
+            case 9: __reboot(LINUX_REBOOT_MAGIC1, LINUX_REBOOT_MAGIC2, LINUX_REBOOT_CMD_RESTART2, "download");break;
         }
+    }
+}
+
+#define TWEAK_COUNT 7
+void show_tweaks_menu() {
+    ensure_root_path_mounted("SDCARD:");
+    static char* headers[] = {  "Voodoo++ Tweak Options",
+                                "",
+                                NULL
+    };
+
+    static char* list[] = { "CFQ tweak",
+                            "Kernel VM tweak",
+                            "Kernel scheduler tweak",
+                            "Misc tweaks",
+                            "IPv6 privacy tweak",
+                            "CIFS tweak",
+                            "TUN tweak",
+                            "------------------------------------------",
+                            "Disable all",
+                            "Enable all",
+                            NULL
+    };
+
+    static char* tweaks[] = { "cfq", "vm", "ksch", "misc", "ipv6", "cifs", "tun" };
+    bool tweaks_enabled[TWEAK_COUNT];
+
+    char tmp[PATH_MAX];
+    while (1) {
+        FILE* f = NULL;
+
+        ui_print("\nTweaks enabled:\n");
+        
+        for (int i=0; i<TWEAK_COUNT; i++) {
+            sprintf(tmp, "/sdcard/Voodoo/disable-%s-tweak", tweaks[i]);
+            f = fopen(tmp, "r");
+            if (f == NULL) {
+                ui_print(list[i]);
+                ui_print("\n");
+
+                tweaks_enabled[i] = true;
+            } else {
+                tweaks_enabled[i] = false;
+                fclose(f);
+            }
+        }
+
+        int chosen_item = get_menu_selection(headers, list, 0);
+
+        while (chosen_item == TWEAK_COUNT) {
+            chosen_item = get_menu_selection(headers, list, 0);
+        }
+
+        if (chosen_item == GO_BACK)
+            break;
+
+        if (chosen_item < TWEAK_COUNT) {
+            sprintf(tmp, "/voodoo/bin/%s_%s_tweak", 
+                    (tweaks_enabled[chosen_item] ? "disable" : "enable"), 
+                    tweaks[chosen_item]);
+
+            __system(tmp);
+        } else if (chosen_item == TWEAK_COUNT + 1) { // disable all
+            for (int i=0; i<TWEAK_COUNT; i++) {
+                sprintf(tmp, "/voodoo/bin/disable_%s_tweak", tweaks[i]);
+                __system(tmp);
+            }
+        } else if (chosen_item == TWEAK_COUNT + 2) { // enable all
+            for (int i=0; i<TWEAK_COUNT; i++) {
+                sprintf(tmp, "/voodoo/bin/enable_%s_tweak", tweaks[i]);
+                __system(tmp);
+            }
+        }
+     
     }
 }
 
